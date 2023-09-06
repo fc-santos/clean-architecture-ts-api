@@ -1,4 +1,4 @@
-import { type Collection, MongoClient } from 'mongodb'
+import { type Collection, MongoClient, type InsertOneResult, type Document } from 'mongodb'
 
 export const MongoHelper = {
   client: null as MongoClient | null,
@@ -12,5 +12,11 @@ export const MongoHelper = {
   },
   getCollection (name: string): Collection {
     return this.client.db().collection(name)
+  },
+  map (result: InsertOneResult<Document>, collection: any): any {
+    return {
+      id: result.insertedId.toString(),
+      ...collection
+    }
   }
 }
