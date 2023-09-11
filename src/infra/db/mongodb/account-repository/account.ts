@@ -5,10 +5,10 @@ import { MongoHelper } from '../helpers/mongo-helper'
 
 export class AccountMongoRepository implements AddAccountRepository {
   async add (account: AddAccountModel): Promise<AccountModel> {
-    const accountCollection = MongoHelper.getCollection('accounts')
-    const result = await accountCollection.insertOne(account)
+    const accountCollection = await MongoHelper.getCollection('accounts')
+    await accountCollection.insertOne(account)
     return await new Promise(resolve => {
-      resolve(MongoHelper.map(result, account))
+      resolve(MongoHelper.map(account))
     })
   }
 }

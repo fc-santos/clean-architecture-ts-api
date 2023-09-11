@@ -1,23 +1,27 @@
-import { type Collection, MongoClient, type InsertOneResult, type Document } from 'mongodb'
+import { type Collection, MongoClient } from 'mongodb'
 
 export const MongoHelper = {
   client: null as MongoClient | null,
+  uri: null as string | null,
+
   async connect (uri: string): Promise<void> {
+    this.uri = uri
     this.client = await MongoClient.connect(uri)
   },
   async disconnect (): Promise<void> {
     if (this.client) {
       await this.client.close()
+      this.client = null
     }
   },
-  getCollection (name: string): Collection {
+  async getCollection (name: string): Promise<Collection> {
+    if (!this.client) {
+      await this.connect(this.uri)
+    }
     return this.client.db().collection(name)
   },
-  map (result: InsertOneResult<Document>, collection: any): any {
-    const { _id, ...rest } = collection
-    return {
-      ...rest,
-      id: _id.toHexString()
-    }
+  map (collection: any): any {
+    const { _id, ...collectionWithoutId } = collection
+    return Object.assign({}, collectionWithoutId, { id: _id })
   }
 }
