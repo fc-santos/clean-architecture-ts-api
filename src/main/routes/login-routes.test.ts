@@ -6,7 +6,7 @@ const mongoURL = process.env.MONGO_URL
 
 if (!mongoURL) throw new Error('MONGO_URL is not defined')
 
-describe('Signup Routes', () => {
+describe('Login Routes', () => {
   beforeAll(async () => {
     await MongoHelper.connect(mongoURL)
   })
@@ -20,15 +20,17 @@ describe('Signup Routes', () => {
     await MongoHelper.disconnect()
   })
 
-  test('Should return an account on success', async () => {
-    await request(app)
-      .post('/api/signup')
-      .send({
-        name: 'Filipe',
-        email: 'filipe.santos@gmail.com',
-        password: '123',
-        passwordConfirmation: '123'
-      })
-      .expect(200)
+  describe('POST /signup', () => {
+    test('Should return 200 on signup', async () => {
+      await request(app)
+        .post('/api/signup')
+        .send({
+          name: 'Filipe',
+          email: 'filipe.santos@gmail.com',
+          password: '123',
+          passwordConfirmation: '123'
+        })
+        .expect(200)
+    })
   })
 })
